@@ -1,0 +1,16 @@
+﻿@model string
+
+<form asp-controller="NumbersSorting" asp-action="Sort" method="post">
+    <div>
+        <label for="numbers">Enter Numbers (comma-separated):</label>
+        <input type="text" id="numbers" name="numbers" value="@Model" required>
+    </div>
+    <div>
+        <label for="sortingDirection">Sorting Direction:</label>
+        <select id="sortingDirection" name="sortingDirection">
+            <option value="Ascending">Ascending</option>
+            <option value="Descending">Descending</option>
+        </select>
+    </div>
+    <button type="submit">Sort</button>
+</form>
