@@ -1,4 +1,5 @@
 ﻿using ExportNumbers.BAL.DTO;
+using ExportNumbers.DAL.Entities;
 using ExportNumbers.DAL.Interfaces;
 using ExportNumbers.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,14 +37,14 @@ namespace ExportNumbers.Controllers
             var sortedSequence = string.Join(",", sortedNumbers);
 
             // Save sorted sequence to database
-            var numberSequenceDTO = new SortedSequenceDTO
+            var numberSequence = new NumberSequence
             {
                 Sequence = sortedSequence,
                 SortingDirection = vmNumbers.SortingDirection,
                 SortTime = DateTime.Now
             };
 
-            await _numSequenceRepository.InsertSortedSequenceAsync(numberSequenceDTO);
+            await _numSequenceRepository.InsertSortedSequenceAsync(numberSequence);
 
             return RedirectToAction("DisplaySortedSequences");
         }
