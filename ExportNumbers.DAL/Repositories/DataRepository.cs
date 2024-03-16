@@ -1,19 +1,14 @@
 ﻿using ExportNumbers.DAL.Entities;
 using ExportNumbers.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExportNumbers.DAL.Repositories
 {
-    public class NumberSequenceRepository : INumberSequenceRepository
+    public class DataRepository : IDataRepository
     {
         private readonly AppDbContext _context;
 
-        public NumberSequenceRepository(AppDbContext Context)
+        public DataRepository(AppDbContext Context)
         {
             _context = Context;
         }

@@ -1,3 +1,5 @@
+using ExportNumbers.BAL;
+using ExportNumbers.BAL.Contracts;
 using ExportNumbers.DAL;
 using ExportNumbers.DAL.Interfaces;
 using ExportNumbers.DAL.Repositories;
@@ -10,7 +12,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<INumberSequenceRepository, NumberSequenceRepository>();
+builder.Services.AddScoped<INumberSortService, NumberSortService>();
+builder.Services.AddScoped<IDataRepository, DataRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,6 +34,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=NumbersSorting}/{action=Index}/{id?}");
 
 app.Run();

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace ExportNumbers.DAL.Entities
 {
-
+  [Table("NumberSequence")]
     public class NumberSequence
     {
+        [Key]
         public int Id { get; set; }
         public string? Sequence { get; set; }
         public string? SortingDirection { get; set; }
-        public DateTime SortTime { get; set; }
+        public int SortTime { get; set; }
     }
 }

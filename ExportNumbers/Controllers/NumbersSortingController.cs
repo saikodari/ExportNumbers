@@ -1,18 +1,20 @@
-﻿using ExportNumbers.BAL.DTO;
+﻿using ExportNumbers.BAL.Contracts;
 using ExportNumbers.DAL.Entities;
 using ExportNumbers.DAL.Interfaces;
 using ExportNumbers.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Diagnostics;
 
 namespace ExportNumbers.Controllers
 {
     public class NumbersSortingController : Controller
     {
-        private readonly INumberSequenceRepository _numSequenceRepository;
+        private readonly INumberSortService _numberSortService;
 
-        public NumbersSortingController(INumberSequenceRepository numSequenceRepository)
+        public NumbersSortingController(INumberSortService numberSortService)
         {
-            _numSequenceRepository = numSequenceRepository;
+            _numberSortService = numberSortService;
         }
         public IActionResult Index()
         {
@@ -26,37 +28,35 @@ namespace ExportNumbers.Controllers
                 ModelState.AddModelError("Numbers", "Please enter numbers to sort.");
                 return View("Index");
             }
-
-            // Split numbers input by comma and convert to integers
             var numbers = vmNumbers.Numbers.Split(',').Select(n => int.Parse(n.Trim()));
-
-            // Sort numbers based on sorting direction
+            Stopwatch stopwatch = Stopwatch.StartNew();
             var sortedNumbers = vmNumbers.SortingDirection == "asc" ? numbers.OrderBy(n => n) : numbers.OrderByDescending(n => n);
+            stopwatch.Stop();
+            long elapsedTicks = stopwatch.ElapsedTicks;
+            double milliseconds = (double)elapsedTicks / Stopwatch.Frequency * 1000.0;
+            int sortTime = (int)milliseconds;
 
-            // Join sorted numbers into a string
             var sortedSequence = string.Join(",", sortedNumbers);
-
-            // Save sorted sequence to database
-            var numberSequence = new NumberSequence
+           
+            var obj = new NumberSequence
             {
                 Sequence = sortedSequence,
                 SortingDirection = vmNumbers.SortingDirection,
-                SortTime = DateTime.Now
+                SortTime = sortTime
             };
 
-            await _numSequenceRepository.InsertSortedSequenceAsync(numberSequence);
-
-            return RedirectToAction("DisplaySortedSequences");
+            await _numberSortService.InsertSortedSequenceAsync(obj);
+            return new JsonResult(new { success = true, message = "saved succesfully!" });
         }
-        public async Task<IActionResult> DisplaySortedSequences()
+        public async Task<PartialViewResult> DisplaySortedSequences()
         {
-            var sortedSequences = await _numSequenceRepository.GetAllSortedSequencesAsync();
-            return View(sortedSequences);
+            var sortedSequences = await _numberSortService.GetAllSortedSequencesAsync();
+            return PartialView("_DisplaySortedSequences", sortedSequences);
         }
 
         public async Task<IActionResult> ExportSortedSequences()
         {
-            var sortedSequences = await _numSequenceRepository.GetAllSortedSequencesAsync();
+            var sortedSequences = await _numberSortService.GetAllSortedSequencesAsync();
             return Json(sortedSequences);
         }
     }

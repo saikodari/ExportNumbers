@@ -1,0 +1,71 @@
+﻿@using ExportNumbers.DAL.Entities
+@model List<NumberSequence>
+
+<div>
+    <button type="button" class="btn btn-primary mb-3" id="exportJsonBtn">Export to JSON</button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Sequence</th>
+                <th>Sorting Direction</th>
+                <th>Sort Time(ms)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model==null)
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No data available</td>
+                </tr>
+            }
+            else
+            {
+                if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Sequence</td>
+                            <td>@item.SortingDirection</td>
+                            <td>@item.SortTime</td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            $('#exportJsonBtn').click(function () {
+                debugger;
+                $.ajax({
+                    url: '@Url.Action("ExportSortedSequences", "NumbersSorting")',
+                    type: 'GET',
+                    success: function (response) {
+                        // Convert the JSON response to a string
+                        var jsonString = JSON.stringify(response);
+
+                        // Create a blob with the JSON data
+                        var blob = new Blob([jsonString], { type: 'application/json' });
+
+                        // Create a temporary anchor element
+                        var a = document.createElement('a');
+                        a.href = window.URL.createObjectURL(blob);
+                        a.download = 'sorted_sequences.json'; // Set the filename
+                        a.click(); // Trigger the download
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error("Failed to export sorted sequences as JSON", 'Error', { "closeButton": true });
+                    }
+                });
+            });
+        });
+    </script>
+
