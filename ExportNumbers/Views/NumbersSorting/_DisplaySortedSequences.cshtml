@@ -1,9 +1,21 @@
 ﻿@using ExportNumbers.DAL.Entities
 @model List<NumberSequence>
-
-<div>
-    <button type="button" class="btn btn-primary mb-3" id="exportJsonBtn">Export to JSON</button>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Available Numbers</h2>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+            <div>
+                <button type="button" class="btn btn-primary mb-3" id="exportJsonBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="Export to JSON">
+                    <i class="fas fa-file-export"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
