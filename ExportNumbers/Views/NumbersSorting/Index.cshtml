@@ -9,8 +9,8 @@
                     <form id="sortForm" asp-controller="NumbersSorting" asp-action="Sort" method="post" class="mt-4">
                         <div class="form-group">
                             <label asp-for="Numbers">Enter Numbers (comma-separated):</label>
-                            <input asp-for="Numbers" class="form-control" required />
-                            <span asp-validation-for="Numbers" class="text-danger"></span>
+                            <input asp-for="Numbers" class="form-control" />
+                            <span asp-validation-for="Numbers" class="text-danger" id="numbersValidation"></span>
                         </div>
                         <div class="form-group">
                             <label asp-for="SortingDirection">Sorting Direction:</label>
@@ -20,7 +20,7 @@
                             </select>
                         </div>
                         <div class="form-group" style="margin-top:10px;">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -36,10 +36,16 @@
 </div>
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        $(document).ready(function () {           
             loadExstingNumbers();
+          
             $('#sortForm').submit(function (e) {
-                e.preventDefault();
+                debugger;
+                var isValid = validateNumbersInput();
+                if (!isValid) {
+                    e.preventDefault();
+                    return;
+                }
                 var formData = $(this).serialize();
                 $.ajax({
                     url: '@Url.Action("Sort", "NumbersSorting")',
@@ -53,13 +59,40 @@
                         toastr.error("something went wrong", 'Error', { "closeButton": true });
                     }
                 });
-            });            
-            
-            function loadExstingNumbers() {
-                $('#DisplaySortedSequences').load('/NumbersSorting/DisplaySortedSequences');
-            }
+            });
 
-        });       
+
+        });
+        $('#Numbers').change(function () {
+            debugger;
+            if (validateNumbersInput()) {
+                $('#submitButton').prop('disabled', false);
+            } else {
+                $('#submitButton').prop('disabled', true);
+            }
+        });
+        function loadExstingNumbers() {
+            $('#DisplaySortedSequences').load('/NumbersSorting/DisplaySortedSequences');
+        }
+
+        function validateNumbersInput() {
+            debugger;
+            var numbersInput = $('#Numbers').val();
+            if(numbersInput=='' || numbersInput==null)
+            {
+                $('#numbersValidation').text("Numbers field is required");
+                return false;
+            }
+            var numbersPattern = /^\d+(,\d+)*$/;
+            if (!numbersPattern.test(numbersInput)) {
+                $('#numbersValidation').text("Please enter valid integer numbers (comma-separated).");
+                return false;
+            } else {
+                $('#numbersValidation').text("");
+                return true;
+            }
+        }
     </script>
 }
+
 
