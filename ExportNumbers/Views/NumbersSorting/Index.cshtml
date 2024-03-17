@@ -41,9 +41,10 @@
           
             $('#sortForm').submit(function (e) {
                 debugger;
+                e.preventDefault();
                 var isValid = validateNumbersInput();
                 if (!isValid) {
-                    e.preventDefault();
+                    
                     return;
                 }
                 var formData = $(this).serialize();
@@ -52,8 +53,10 @@
                     type: 'POST',
                     data: formData,
                     success: function (response) {
+                        if (response.success) {
                         toastr.success(response.message, 'Success', { "closeButton": true });
                         loadExstingNumbers();
+                        }
                     },
                     error: function (xhr, status, error) {
                         toastr.error("something went wrong", 'Error', { "closeButton": true });
@@ -63,7 +66,7 @@
 
 
         });
-        $('#Numbers').change(function () {
+        $('#Numbers').on('input',function () {
             debugger;
             if (validateNumbersInput()) {
                 $('#submitButton').prop('disabled', false);

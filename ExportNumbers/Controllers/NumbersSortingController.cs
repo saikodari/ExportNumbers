@@ -30,7 +30,40 @@ namespace ExportNumbers.Controllers
             }
             var numbers = vmNumbers.Numbers.Split(',').Select(n => int.Parse(n.Trim()));
             Stopwatch stopwatch = Stopwatch.StartNew();
-            var sortedNumbers = vmNumbers.SortingDirection == "asc" ? numbers.OrderBy(n => n) : numbers.OrderByDescending(n => n);
+            var sortedNumbers = numbers.ToList();
+
+            if (vmNumbers.SortingDirection == "asc")
+            {
+                for (int i = 0; i < sortedNumbers.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < sortedNumbers.Count; j++)
+                    {
+                        if (sortedNumbers[i] > sortedNumbers[j])
+                        {
+                            int temp = sortedNumbers[i];
+                            sortedNumbers[i] = sortedNumbers[j];
+                            sortedNumbers[j] = temp;
+                        }
+                    }
+                }
+            }
+            else if (vmNumbers.SortingDirection == "desc")
+            {
+                for (int i = 0; i < sortedNumbers.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < sortedNumbers.Count; j++)
+                    {
+                        if (sortedNumbers[i] < sortedNumbers[j])
+                        {
+                            int temp = sortedNumbers[i];
+                            sortedNumbers[i] = sortedNumbers[j];
+                            sortedNumbers[j] = temp;
+                        }
+                    }
+                }
+            }
+
+            //var sortedNumbers = vmNumbers.SortingDirection == "asc" ? numbers.OrderBy(n => n) : numbers.OrderByDescending(n => n);
             stopwatch.Stop();
             long elapsedTicks = stopwatch.ElapsedTicks;
             double milliseconds = (double)elapsedTicks / Stopwatch.Frequency * 1000.0;
